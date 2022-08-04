@@ -1,5 +1,5 @@
-import 'package:flutter_rest_api_example/controllers/data_controllers.dart';
 import 'package:get/get.dart';
+import '../controllers/data_controllers.dart';
 
 class HomePageBinding implements Bindings {
   @override
