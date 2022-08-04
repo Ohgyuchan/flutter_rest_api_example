@@ -7,7 +7,7 @@ import 'route_constant.dart';
 List<GetPage> getPages = [
   GetPage(
       name: RouteConstant.homePage,
-      page: () => HomePage(),
+      page: () => const HomePage(),
       // middlewares: const [
       //   // Add here
       //   // AuthGuard(),
