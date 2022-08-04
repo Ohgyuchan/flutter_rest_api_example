@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +19,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List _data = [];
+  final List<Picture> _data = [];
+  int page = 1;
+  int limit = 20;
 
   @override
   void initState() {
@@ -47,13 +51,18 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView.builder(
           itemCount: _data.length,
           itemBuilder: (context, index) {
-            return Center(
-              child: Text(
-                _data[index],
-                style: const TextStyle(
-                  fontSize: 50,
-                  fontWeight: FontWeight.bold,
-                ),
+            return Card(
+              child: Column(
+                children: [
+                  Text(
+                    _data[index].author,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Image.network(
+                      'https://picsum.photos/id/${_data[index].id}/300/300')
+                ],
               ),
             );
           }),
@@ -61,16 +70,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _fetchData() async {
-    int page = 1;
-    int limit = 20;
     var response = await http.get(Uri.parse(
       'https://picsum.photos/v2/list?page=$page&limit=$limit',
     ));
     if (response.statusCode == 200) {
       String jsonString = response.body;
       print(jsonString);
+
+      List pictures = jsonDecode(jsonString);
+
+      for (var picture in pictures) {
+        Picture pictureToAdd =
+            Picture(id: picture["id"], author: picture["author"]);
+        print(pictureToAdd.author);
+
+        setState(() {
+          _data.add(pictureToAdd);
+          page++;
+        });
+      }
     } else {
       print('error');
     }
   }
+}
+
+class Picture {
+  String id;
+  String author;
+
+  Picture({required this.id, required this.author});
 }
